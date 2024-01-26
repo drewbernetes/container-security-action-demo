@@ -8,19 +8,15 @@
 
 [//]: # (### Deprecated/Removed:)
 
-## [ 2024/01/23 - v0.0.2 ]
+## [ 2024/01/23 ]
 
 ### Added/Changed:
 
-* Changed aws- prefixed to s3-prefixed to remove any confusion around aws requirement
-* Updated action versions
+* added external repo testing
+* bumped action version up 
 
-## [ 2024/01/23 - v0.0.1 ]
+## [ 2024/01/23 ]
 
 ### Added/Changed:
 
-* Added Trivy for SBOM creation and scanning
-* Added ability to provide a `.trivyignore` file to bypass particular CVE checks
-* Only fixed vulns will cause a failure, unfixed will appear in a report
-* Image signing done via cosign
-* Added optional tlog uploads for cosign
+* Added ability to test docker hub and ghcr
