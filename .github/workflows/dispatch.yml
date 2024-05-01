@@ -11,7 +11,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: ghcr.io
           repo-username: ${{ github.repository_owner }}
@@ -39,7 +39,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: ghcr.io
           repo-username: ${{ github.repository_owner }}
@@ -67,7 +67,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: ghcr.io
           repo-username: ${{ github.repository_owner }}
@@ -95,7 +95,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
@@ -123,7 +123,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
@@ -151,7 +151,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
@@ -180,7 +180,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "registry.hudson-viles.uk/public"
           repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
@@ -208,7 +208,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "registry.hudson-viles.uk/public"
           repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
@@ -236,7 +236,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - uses: drewbernetes/container-security-action@v0.0.2
+      - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "registry.hudson-viles.uk/public"
           repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
