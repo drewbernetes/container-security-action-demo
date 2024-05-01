@@ -4,19 +4,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  ghcr-no-push:
+  ghcr:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
       id-token: write
+    strategy:
+      matrix:
+        repo:
+          - "ghcr.io"
+        publish:
+          - true
+          - false
+        add-latest:
+          - true
+          - false
+        exclude:
+          - publish: false
+            add-latest: true
+        include:
+          - publish: false
+            add-latest: false
+            name: "csa-demo-ghcr-no-push"
+          - publish: true
+            add-latest: false
+            name: "csa-demo-ghcr-no-latest"
+          - publish: true
+            add-latest: true
+            name: "csa-demo-ghcr-latest"
     steps:
       - uses: drewbernetes/container-security-action@speed-improvements
         with:
-          image-repo: ghcr.io
+          image-repo: "ghcr.io"
           repo-username: ${{ github.repository_owner }}
           repo-password: ${{ secrets.GITHUB_TOKEN }}
-          image-name: csa-demo-ghcr-no-push
+          image-name: ${{ matrix.name }}
           image-tag: "1.0"
           check-severity: CRITICAL
           trivyignore-from-s3: true
@@ -25,82 +48,46 @@ jobs:
           s3-secret-key: ${{secrets.S3_SECRET_KEY}}
           s3-bucket: "trivyignores"
           s3-path: "container-security-action-demo"
-          add-latest-tag: false
-          publish-image: false
+          add-latest-tag: ${{ matrix.add-latest }}
+          publish-image: ${{ matrix.publish }}
           cosign-private-key: ${{secrets.COSIGN_KEY}}
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
           cosign-tlog: false
           dockerfile-path: .
-
-  ghcr-no-latest:
+  docker:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
       id-token: write
-    steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
-        with:
-          image-repo: ghcr.io
-          repo-username: ${{ github.repository_owner }}
-          repo-password: ${{ secrets.GITHUB_TOKEN }}
-          image-name: csa-demo-ghcr-no-latest
-          image-tag: "1.0"
-          check-severity: CRITICAL
-          trivyignore-from-s3: true
-          s3-endpoint: "https://api.s3.hudson-viles.uk"
-          s3-access-key: ${{secrets.S3_ACCESS_KEY}}
-          s3-secret-key: ${{secrets.S3_SECRET_KEY}}
-          s3-bucket: "trivyignores"
-          s3-path: "container-security-action-demo"
-          add-latest-tag: false
-          publish-image: true
-          cosign-private-key: ${{secrets.COSIGN_KEY}}
-          cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
-          dockerfile-path: .
-
-  ghcr-with-latest:
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
-        with:
-          image-repo: ghcr.io
-          repo-username: ${{ github.repository_owner }}
-          repo-password: ${{ secrets.GITHUB_TOKEN }}
-          image-name: csa-demo-ghcr-with-latest
-          image-tag: "1.0"
-          check-severity: CRITICAL
-          trivyignore-from-s3: true
-          s3-endpoint: "https://api.s3.hudson-viles.uk"
-          s3-access-key: ${{secrets.S3_ACCESS_KEY}}
-          s3-secret-key: ${{secrets.S3_SECRET_KEY}}
-          s3-bucket: "trivyignores"
-          s3-path: "container-security-action-demo"
-          add-latest-tag: true
-          publish-image: true
-          cosign-private-key: ${{secrets.COSIGN_KEY}}
-          cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
-          dockerfile-path: .
-
-  docker-no-push:
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+    strategy:
+      matrix:
+        publish:
+          - true
+          - false
+        add-latest:
+          - true
+          - false
+        exclude:
+          - publish: false
+            add-latest: true
+        include:
+          - publish: false
+            add-latest: false
+            name: "csa-demo-docker-no-push"
+          - publish: true
+            add-latest: false
+            name: "csa-demo-docker-no-latest"
+          - publish: true
+            add-latest: true
+            name: "csa-demo-docker-latest"
     steps:
       - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
           repo-password: ${{ secrets.DOCKER_PASSWORD }}
-          image-name: csa-demo-docker-no-push
+          image-name: ${{ matrix.name }}
           image-tag: "1.0"
           check-severity: CRITICAL
           trivyignore-from-s3: true
@@ -109,83 +96,46 @@ jobs:
           s3-secret-key: ${{secrets.S3_SECRET_KEY}}
           s3-bucket: "trivyignores"
           s3-path: "container-security-action-demo"
-          add-latest-tag: false
-          publish-image: false
+          add-latest-tag: ${{ matrix.add-latest }}
+          publish-image: ${{ matrix.publish }}
           cosign-private-key: ${{secrets.COSIGN_KEY}}
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
           cosign-tlog: false
           dockerfile-path: .
-
-  docker-no-latest:
+  external-repos:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
       id-token: write
-    steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
-        with:
-          image-repo: "drewviles"
-          repo-username: ${{ secrets.DOCKER_USER }}
-          repo-password: ${{ secrets.DOCKER_PASSWORD }}
-          image-name: csa-demo-docker-no-latest
-          image-tag: "1.0"
-          check-severity: CRITICAL
-          trivyignore-from-s3: true
-          s3-endpoint: "https://api.s3.hudson-viles.uk"
-          s3-access-key: ${{secrets.S3_ACCESS_KEY}}
-          s3-secret-key: ${{secrets.S3_SECRET_KEY}}
-          s3-bucket: "trivyignores"
-          s3-path: "container-security-action-demo"
-          add-latest-tag: false
-          publish-image: true
-          cosign-private-key: ${{secrets.COSIGN_KEY}}
-          cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
-          dockerfile-path: .
-
-  docker-with-latest:
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
-        with:
-          image-repo: "drewviles"
-          repo-username: ${{ secrets.DOCKER_USER }}
-          repo-password: ${{ secrets.DOCKER_PASSWORD }}
-          image-name: csa-demo-docker-with-latest
-          image-tag: "1.0"
-          check-severity: CRITICAL
-          trivyignore-from-s3: true
-          s3-endpoint: "https://api.s3.hudson-viles.uk"
-          s3-access-key: ${{secrets.S3_ACCESS_KEY}}
-          s3-secret-key: ${{secrets.S3_SECRET_KEY}}
-          s3-bucket: "trivyignores"
-          s3-path: "container-security-action-demo"
-          add-latest-tag: true
-          publish-image: true
-          cosign-private-key: ${{secrets.COSIGN_KEY}}
-          cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
-          dockerfile-path: .
-
-
-  external-registry-no-push:
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+    strategy:
+      matrix:
+        publish:
+          - true
+          - false
+        add-latest:
+          - true
+          - false
+        exclude:
+          - publish: false
+            add-latest: true
+        include:
+          - publish: false
+            add-latest: false
+            name: "csa-demo-external-no-push"
+          - publish: true
+            add-latest: false
+            name: "csa-demo-external-no-latest"
+          - publish: true
+            add-latest: true
+            name: "csa-demo-external-latest"
     steps:
       - uses: drewbernetes/container-security-action@speed-improvements
         with:
           image-repo: "registry.hudson-viles.uk/public"
           repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
           repo-password: ${{ secrets.REGISTRY_PUBLIC_PASSWORD }}
-          image-name: csa-demo-external-registry-no-push
+          image-name: ${{ matrix.name }}
           image-tag: "1.0"
           check-severity: CRITICAL
           trivyignore-from-s3: true
@@ -194,64 +144,8 @@ jobs:
           s3-secret-key: ${{secrets.S3_SECRET_KEY}}
           s3-bucket: "trivyignores"
           s3-path: "container-security-action-demo"
-          add-latest-tag: false
-          publish-image: false
-          cosign-private-key: ${{secrets.COSIGN_KEY}}
-          cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
-          dockerfile-path: .
-
-  external-registry-no-latest:
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
-        with:
-          image-repo: "registry.hudson-viles.uk/public"
-          repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
-          repo-password: ${{ secrets.REGISTRY_PUBLIC_PASSWORD }}
-          image-name: csa-demo-external-registry-no-latest
-          image-tag: "1.0"
-          check-severity: CRITICAL
-          trivyignore-from-s3: true
-          s3-endpoint: "https://api.s3.hudson-viles.uk"
-          s3-access-key: ${{secrets.S3_ACCESS_KEY}}
-          s3-secret-key: ${{secrets.S3_SECRET_KEY}}
-          s3-bucket: "trivyignores"
-          s3-path: "container-security-action-demo"
-          add-latest-tag: false
-          publish-image: true
-          cosign-private-key: ${{secrets.COSIGN_KEY}}
-          cosign-password: ${{secrets.COSIGN_PASSWORD}}
-          cosign-tlog: false
-          dockerfile-path: .
-
-  external-registry-with-latest:
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
-        with:
-          image-repo: "registry.hudson-viles.uk/public"
-          repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
-          repo-password: ${{ secrets.REGISTRY_PUBLIC_PASSWORD }}
-          image-name: csa-demo-external-registry-with-latest
-          image-tag: "1.0"
-          check-severity: CRITICAL
-          trivyignore-from-s3: true
-          s3-endpoint: "https://api.s3.hudson-viles.uk"
-          s3-access-key: ${{secrets.S3_ACCESS_KEY}}
-          s3-secret-key: ${{secrets.S3_SECRET_KEY}}
-          s3-bucket: "trivyignores"
-          s3-path: "container-security-action-demo"
-          add-latest-tag: true
-          publish-image: true
+          add-latest-tag: ${{ matrix.add-latest }}
+          publish-image: ${{ matrix.publish }}
           cosign-private-key: ${{secrets.COSIGN_KEY}}
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
           cosign-tlog: false
