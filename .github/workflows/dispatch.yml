@@ -7,7 +7,7 @@ jobs:
   ghcr:
     runs-on: ubuntu-22.04
     permissions:
-      contents: read
+      contents: write
       packages: write
       id-token: write
     strategy:
@@ -20,21 +20,39 @@ jobs:
         add-latest:
           - true
           - false
+        dependency-graph:
+          - true
+          - false
         exclude:
           - publish: false
             add-latest: true
         include:
           - publish: false
             add-latest: false
+            dependency-graph: true
+            name: "csa-demo-ghcr-deps-no-push"
+          - publish: true
+            add-latest: false
+            dependency-graph: true
+            name: "csa-demo-ghcr-deps-no-latest"
+          - publish: true
+            add-latest: true
+            dependency-graph: true
+            name: "csa-demo-ghcr-deps-latest"
+          - publish: false
+            add-latest: false
+            dependency-graph: false
             name: "csa-demo-ghcr-no-push"
           - publish: true
             add-latest: false
+            dependency-graph: false
             name: "csa-demo-ghcr-no-latest"
           - publish: true
             add-latest: true
+            dependency-graph: false
             name: "csa-demo-ghcr-latest"
     steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
+      - uses: drewbernetes/container-security-action@deps-graph-changes
         with:
           image-repo: "ghcr.io"
           repo-username: ${{ github.repository_owner }}
@@ -54,6 +72,8 @@ jobs:
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
           cosign-tlog: false
           dockerfile-path: .
+          enable-dependency-graph: ${{ matrix.dependency-graph }}
+          dependency-graph-token: ${{ secrets.GITHUB_TOKEN }}
   docker:
     runs-on: ubuntu-22.04
     permissions:
@@ -82,7 +102,7 @@ jobs:
             add-latest: true
             name: "csa-demo-docker-latest"
     steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
+      - uses: drewbernetes/container-security-action@deps-graph-changes
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
@@ -130,7 +150,7 @@ jobs:
             add-latest: true
             name: "csa-demo-external-latest"
     steps:
-      - uses: drewbernetes/container-security-action@speed-improvements
+      - uses: drewbernetes/container-security-action@deps-graph-changes
         with:
           image-repo: "registry.hudson-viles.uk/public"
           repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
