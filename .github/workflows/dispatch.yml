@@ -52,7 +52,7 @@ jobs:
             dependency-graph: false
             name: "csa-demo-ghcr-latest"
     steps:
-      - uses: drewbernetes/container-security-action@test-grype
+      - uses: drewbernetes/container-security-action@v0.1.0
         with:
           image-repo: "ghcr.io"
           repo-username: ${{ github.repository_owner }}
@@ -103,7 +103,7 @@ jobs:
             add-latest: true
             name: "csa-demo-docker-latest"
     steps:
-      - uses: drewbernetes/container-security-action@test-grype
+      - uses: drewbernetes/container-security-action@v0.1.0
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
@@ -153,7 +153,7 @@ jobs:
 #            add-latest: true
 #            name: "csa-demo-external-latest"
 #    steps:
-#      - uses: drewbernetes/container-security-action@test-grype
+#      - uses: drewbernetes/container-security-action@v0.1.0
 #        with:
 #          image-repo: "registry.hudson-viles.uk/public"
 #          repo-username: ${{ secrets.REGISTRY_PUBLIC_USER }}
