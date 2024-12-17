@@ -1,7 +1,9 @@
 name: Build and scan image
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - "test_security_action"
 
 jobs:
   ghcr:
@@ -52,7 +54,7 @@ jobs:
             dependency-graph: false
             name: "csa-demo-ghcr-latest"
     steps:
-      - uses: drewbernetes/container-security-action@v0.1.0
+      - uses: drewbernetes/container-security-action@${{ github.event.client_payload.branch }}
         with:
           image-repo: "ghcr.io"
           repo-username: ${{ github.repository_owner }}
@@ -103,7 +105,7 @@ jobs:
             add-latest: true
             name: "csa-demo-docker-latest"
     steps:
-      - uses: drewbernetes/container-security-action@v0.1.0
+      - uses: drewbernetes/container-security-action@${{ github.event.client_payload.branch }}
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
