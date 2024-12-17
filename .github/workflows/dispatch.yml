@@ -1,9 +1,7 @@
 name: Build and scan image
 
 on:
-  repository_dispatch:
-    types:
-      - "test_security_action"
+  workflow_dispatch:
 
 jobs:
   ghcr:
@@ -22,6 +20,9 @@ jobs:
         add-latest:
           - true
           - false
+        ignore-not-fixed:
+          - true
+          - false
         dependency-graph:
           - true
           - false
@@ -29,32 +30,68 @@ jobs:
           - publish: false
             add-latest: true
         include:
-          - publish: false
-            add-latest: false
-            dependency-graph: true
-            name: "csa-demo-ghcr-deps-no-push"
           - publish: true
             add-latest: false
-            dependency-graph: true
-            name: "csa-demo-ghcr-deps-no-latest"
+            ignore-not-fixed: false
+            dependency-graph: false
+            name: "csa-demo-ghcr-push"
           - publish: true
             add-latest: true
+            ignore-not-fixed: false
+            dependency-graph: false
+            name: "csa-demo-ghcr-push-latest"
+          - publish: true
+            add-latest: true
+            ignore-not-fixed: true
+            dependency-graph: false
+            name: "csa-demo-ghcr-push-latest-ignore"
+          - publish: true
+            add-latest: true
+            ignore-not-fixed: false
             dependency-graph: true
-            name: "csa-demo-ghcr-deps-latest"
+            name: "csa-demo-ghcr-push-latest-deps"
+          - publish: true
+            add-latest: true
+            ignore-not-fixed: true
+            dependency-graph: true
+            name: "csa-demo-ghcr-push-latest-ignore-deps"
+          - publish: true
+            add-latest: false
+            ignore-not-fixed: false
+            dependency-graph: true
+            name: "csa-demo-ghcr-push-deps"
+          - publish: true
+            add-latest: false
+            ignore-not-fixed: true
+            dependency-graph: true
+            name: "csa-demo-ghcr-push-ignore-deps"
+          - publish: true
+            add-latest: false
+            ignore-not-fixed: true
+            dependency-graph: false
+            name: "csa-demo-ghcr-push-ignore"
           - publish: false
             add-latest: false
+            ignore-not-fixed: false
             dependency-graph: false
             name: "csa-demo-ghcr-no-push"
-          - publish: true
+          - publish: false
             add-latest: false
+            ignore-not-fixed: true
             dependency-graph: false
-            name: "csa-demo-ghcr-no-latest"
-          - publish: true
-            add-latest: true
-            dependency-graph: false
-            name: "csa-demo-ghcr-latest"
+            name: "csa-demo-ghcr-no-push-ignore"
+          - publish: false
+            add-latest: false
+            ignore-not-fixed: false
+            dependency-graph: true
+            name: "csa-demo-ghcr-no-push-deps"
+          - publish: false
+            add-latest: false
+            ignore-not-fixed: true
+            dependency-graph: true
+            name: "csa-demo-ghcr-no-push-ignore-deps"
     steps:
-      - uses: drewbernetes/container-security-action@${{ github.event.client_payload.branch }}
+      - uses: drewbernetes/container-security-action@v0.2.0
         with:
           image-repo: "ghcr.io"
           repo-username: ${{ github.repository_owner }}
@@ -70,6 +107,7 @@ jobs:
           s3-path: "container-security-action-demo.yaml"
           add-latest-tag: ${{ matrix.add-latest }}
           publish-image: ${{ matrix.publish }}
+          ignore-not-fixed: ${{ matrix.ignore-not-fixed }}
           cosign-private-key: ${{secrets.COSIGN_KEY}}
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
           cosign-tlog: false
@@ -91,21 +129,39 @@ jobs:
         add-latest:
           - true
           - false
+        ignore-not-fixed:
+          - true
+          - false
         exclude:
           - publish: false
             add-latest: true
         include:
-          - publish: false
-            add-latest: false
-            name: "csa-demo-docker-no-push"
           - publish: true
             add-latest: false
-            name: "csa-demo-docker-no-latest"
+            ignore-not-fixed: false
+            name: "csa-demo-docker-push"
           - publish: true
             add-latest: true
-            name: "csa-demo-docker-latest"
+            ignore-not-fixed: false
+            name: "csa-demo-docker-push-latest"
+          - publish: true
+            add-latest: false
+            ignore-not-fixed: true
+            name: "csa-demo-docker-push-ignore"
+          - publish: true
+            add-latest: true
+            ignore-not-fixed: true
+            name: "csa-demo-docker-push-latest-ignore"
+          - publish: false
+            add-latest: false
+            ignore-not-fixed: false
+            name: "csa-demo-docker-no-push"
+          - publish: false
+            add-latest: false
+            ignore-not-fixed: true
+            name: "csa-demo-docker-no-push-ignore"
     steps:
-      - uses: drewbernetes/container-security-action@${{ github.event.client_payload.branch }}
+      - uses: drewbernetes/container-security-action@v0.2.0
         with:
           image-repo: "drewviles"
           repo-username: ${{ secrets.DOCKER_USER }}
@@ -121,6 +177,7 @@ jobs:
           s3-path: "container-security-action-demo.yaml"
           add-latest-tag: ${{ matrix.add-latest }}
           publish-image: ${{ matrix.publish }}
+          ignore-not-fixed: ${{ matrix.ignore-not-fixed }}
           cosign-private-key: ${{secrets.COSIGN_KEY}}
           cosign-password: ${{secrets.COSIGN_PASSWORD}}
           cosign-tlog: false
